@@ -1,0 +1,28 @@
+$color   :red;
+$sz      :20em;
+$dev     :false !default;
+$buttons :true;
+$colors  :true;
+
+/* CONDICIONALES */
+@if $dev {
+    * {
+        outline: 1px solid red;
+    }
+}
+
+@else if (3==5) or (1==2) {
+    * {
+        display: block;
+    }
+}
+
+@else {
+    * {
+        color: green;
+    }
+}
+
+
+@import "buttons";
+@import "colors";

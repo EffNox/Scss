@@ -1,0 +1,67 @@
+@mixin button($colors...) {
+    @if $buttons {
+        .btn {
+            display: inline-block;
+            margin : 1em;
+            color  : map-get($buttons-colors, nth($colors, 1));
+
+            a {
+                text-decoration: none;
+            }
+
+            @if length($colors)>1 {
+                @for $i from 2 through length($colors) {
+                    &.#{nth($colors, $i)} {
+                        color: map-get($buttons-colors, nth($colors, $i));
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@mixin menu($selector-item:'.menu-item', $selector-link:'.menu-link') {
+    margin-top   : 0;
+    margin-bottom: 0;
+    margin-left  : 0;
+    list-style   : none;
+
+    #{$selector-item} {
+        display: block;
+    }
+
+    #{$selector-link} {
+        text-decoration: none;
+        display        : block;
+    }
+}
+
+/* DIRECTIVA CONTENT*/
+@mixin main {
+    display: block;
+    color  : red;
+
+    @media screen and (min-width: 1024px) {
+        @content;
+    }
+
+    // .link {
+    // @content;
+    // }
+}
+
+/* MIXIN PARA RESPONSIVE WEB DESIGN */
+@mixin mq($breakpoint) {
+    @if map-has-key($breakpoints, $breakpoint) {
+        @media only screen and (min-width: map-get($breakpoints, $breakpoint)) {
+            @content;
+        }
+    }
+
+    @if type-of($breakpoint)==number and unit($breakpoint)=='px' {
+        @media only screen and (min-width: $breakpoint) {
+            @content;
+        }
+    }
+}

@@ -1,0 +1,11 @@
+$buttons       :true !default;
+$buttons-colors:(primary:blue, alert:red, secondary:yellow, cta:orange, error:pink, warning:peru);
+$breakpoints   : (celular:480px,
+    tablet :768px,
+    desktop:1024px,
+
+    small:320px,
+    medium:640px,
+    large:1024px,
+    xlarge:1440px);
+$path     : '/assets/imgs/';

@@ -1,0 +1,365 @@
+/* BÁSICOS */
+$sz   : 200px;
+$dark : #222;
+$wd   : 20px !default;
+$color: red;
+
+body {
+    padding-top: $sz - 10;
+    margin     : $wd;
+}
+
+p {
+    margin     : $wd;
+    padding-top: $sz;
+    width      :calc(100% - #{$sz});
+}
+
+.#{$color} {
+    color: $color;
+}
+
+
+
+/* ANIDAMIENTOS */
+ul {
+    margin   : 0;
+    display  : block;
+    animation: menu 1s;
+
+    @media screen and (min-width:640px) {
+        display: flex;
+    }
+
+    @keyframes menu {
+        to {
+            color: red;
+        }
+    }
+
+    &:hover {
+        color: black;
+    }
+
+    &::before {
+        color: grey;
+    }
+}
+
+.menu {
+    display: block;
+
+    font: {
+        size  : 1em;
+        style : italic;
+        family: arial;
+    }
+
+    &-item {
+        color: red;
+    }
+
+    grid-template: {
+        columns: 100px 100px;
+        rows   : auto;
+    }
+}
+
+
+
+/* @IMPORT */
+@import "vars";
+@import "menu";
+
+body {
+    padding: 0px;
+}
+
+
+
+/* @extend */
+%button {
+    display: inline-block;
+    margin : 1em 0;
+    padding: .5em 1.5em;
+}
+
+.btn {
+    // @extend %button;
+    display: inline-block;
+    margin : 1em 0;
+    padding: .5em 1.5em;
+
+    &:hover,
+    &:active {
+        transform: translateY(-5px);
+    }
+}
+
+.btn-alert {
+    @extend %button;
+    // @extend .btn;
+    background: red;
+    color     : white;
+}
+
+
+
+/* ITERACIONES / FOR / BUCLES */
+
+/* FOR */
+@for $i from 1 through 5 {
+    @if $i % 2==0 {
+        .mt-#{$i} {
+            margin-top: #{$i*10}px;
+        }
+    }
+}
+
+/* EACH */
+$colors: red green blue;
+
+@each $color in $colors {
+    .btn-#{$color} {
+        background-color: #{$color};
+    }
+}
+
+$colors     : (primary:red, secondary:green, tertiary:blue);
+$breakpoints: (small:360px, medium:640px, large:1024px, xlarge:1400px);
+
+@each $k,
+$v in $colors {
+    .btn-#{$k} {
+        background: $v;
+    }
+}
+
+
+
+/* ITERACIONES / FOR / BUCLES */
+$colors : hsl(0, 100, 50);
+
+@for $i from 0 through 360 {
+    $colors      : append($colors, hsl($i, 100, 50), comma);
+    // $colors   : append($colors, hsl(0, $i, 50), comma);
+    // $colors: append($colors, hsl(0, 0, $i), comma);
+}
+
+body {
+    // background: linear-gradient(to left, $colors);
+    background: radial-gradient(circle at center, $colors);
+    min-height: 100vh;
+}
+
+
+
+/* MIXINS */
+@import 'configs/vars';
+@import 'mixins/mixins';
+
+@include button(true, green);
+
+.menu {
+    @include menu(li, a);
+}
+
+// @include button(true, white, black, cyan, peru);
+// @include button(true, secondary, primary, cta, error);
+// $buttons:false;
+@include button(map-keys($buttons-colors)...);
+
+/* DIRECTIVA CONTENT */
+.main {
+    @include main {
+        color  : green;
+        display: flex;
+        padding: 0;
+    }
+}
+
+/* MIXIN PARA RESPONSIVE WEB DESIGN */
+body {
+    background: red;
+
+    @include mq(small) {
+        background: green;
+    }
+
+    @include mq(large) {
+        background: yellow;
+    }
+
+    @include mq(5px) {
+        background: cyan;
+    }
+}
+
+
+
+/* FUNCIONES / @function */
+@function double($num) {
+    @if type-of($num)==number {
+        @return $num*2;
+    }
+
+    @return null;
+}
+
+body {
+    font-size: double(11);
+}
+
+@function em($px, $base:16px) {
+    @if type-of($px)==number and unit($px)=='px' {
+        @return $px / $base * 1em;
+    }
+
+    @return null;
+}
+
+body {
+    font-size: em(20px);
+}
+
+@function img($img) {
+    @return url($path+$img);
+}
+
+
+body {
+    background: img('image.png');
+}
+
+/* FUNCIONES DE STRINGS  quote($string) unquote($string) str-length($string) str-index($string,$v) */
+$wd    :1px;
+$style :solid;
+$color :red;
+$colors:(primary:yellow);
+
+body {
+    // border   : unquote($wd +' '+ $style +' '+ $color);
+    border: $wd $style $color;
+
+    &::before {
+        content: quote($style);
+    }
+
+    z-index   : str-index($style, "i");
+    margin    : str-length($style);
+    padding   : to-upper-case($style);
+    font-size : to-lower-case($style);
+    color     : map-get($colors, primary);
+}
+
+/* FUNCIONES DE NUMBERS  percentage($number) max($number1,$number2) */
+@function columns($cols, $total-cols) {
+    @return percentage($cols/$total-cols);
+}
+
+@for $i from 1 through 12 {
+    .col-#{$i} {
+        width: columns($i, 12);
+    }
+}
+
+body {
+    /* floor redondea hacia abajo */
+    width  : floor(54.9);
+    /* ceil redondea hacia arriba */
+    height : ceil(54.1);
+    /* round redondea hacia el más cercano */
+    z-index: round(54.5);
+
+    padding: random(15);
+    padding: random(15);
+}
+
+/* FUNCIONES DE MAPAS Y LISTAS  map-get($map,$k) map-keys($map) map-values($map) map-has-key($map,$k) map-merge($map1,$map2) */
+$border : 1px solid red;
+$border2: 1px dotted green;
+$color  :red;
+$colors :(primary:green, secondary:red, tertiary:blue);
+
+@function color($k) {
+    @if map-has-key($colors, $k) {
+        @return map-get($colors, $k);
+    }
+
+    @return null
+}
+
+body {
+    border-color: nth($border, 3);
+    border-color: index($border, red);
+    border-color: join($border, $border, $separator: comma); //space | comma
+    border      : append(1px solid, $color);
+    background  : color(secondary);
+}
+
+/* FUNCIONES DE INTROSPECCIÓN  
+inspect()
+type-of
+unit()->(devuelve la unidad de un número como string)
+unitless
+mixin-exists
+function-exists
+variable-exists
+global-variable-exists
+*/
+$color:(primary:yellow, secondary:red);
+
+// body {
+// color   : inspect($color);
+// color: unit(10px);
+// color: unitless(10em); //Si tiene o no unidad
+// }
+
+@mixin testMix {
+    color: green;
+}
+
+@if mixin-exists(testMix) {
+    body {
+        background: red;
+    }
+}
+
+@function long-shadow($n, $color) {
+    $shadow: #{1px 1px $color};
+
+    @for $i from 2 through $n {
+        $shadow: append($shadow, #{$i*1px $i*1px $color}, comma);
+    }
+
+    @return $shadow;
+}
+
+.text {
+    font-size  : 60px;
+    text-shadow: long-shadow(100, darken(red, 10));
+}
+
+
+
+/* MODOS DE COLOR CMYK Y RGB */
+body {
+    background-color: rgb(23, 180, 146);
+    background-color: hsl(300, 90, 40);
+    background-color: red(hsl(60, 90, 50));
+    background-color: green(hsl(60, 90, 50));
+    background-color: blue(hsl(60, 90, 50));
+    $color          : rgb(0, 255, 21);
+
+    background-color: hue($color);
+    background-color: saturation($color);
+    background-color: lightness($color);
+}
+
+/* DEBUG WARN ERROR */
+body {
+    @debug type-of(1em); //number
+    @debug type-of(yellow green blue); //list
+    @warn 'Posible error';
+    @error 'Es un error';
+}
